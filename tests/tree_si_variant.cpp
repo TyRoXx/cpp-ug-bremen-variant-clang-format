@@ -51,8 +51,10 @@ namespace
 TEST_CASE("tree of Si::variant", "tree")
 {
 	std::unique_ptr<expression> right = Si::make_unique<expression>(
-	    add{Si::make_unique<expression>(reference{"b"}), Si::make_unique<expression>(literal{1})});
-	expression root = add{Si::make_unique<expression>(reference{"a"}), std::move(right)};
+	  add{Si::make_unique<expression>(reference{"b"}),
+	      Si::make_unique<expression>(literal{1})});
+	expression root =
+	  add{Si::make_unique<expression>(reference{"a"}), std::move(right)};
 	std::ostringstream buffer;
 	print(buffer, root);
 	CHECK("(a + (b + 1))" == buffer.str());

@@ -18,11 +18,6 @@ if(UNIX)
 
 	#currently not possible due to websocketpp and Boost 1.60
 	#add_definitions("-Wconversion")
-
-	option(EINKAEUFER_PEDANTIC "pass -pedantic to the compiler (may generate useless warnings)" OFF)
-	if(EINKAEUFER_PEDANTIC)
-		add_definitions("-pedantic")
-	endif()
 endif()
 
 if(MSVC)
@@ -43,26 +38,7 @@ if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 	conan_basic_setup()
 else()
-	if(MSVC)
-		set(Boost_USE_STATIC_LIBS ON) 
-	endif()
-	find_package(Boost REQUIRED COMPONENTS system filesystem date_time regex coroutine context thread chrono program_options unit_test_framework)
-	if(UNIX)
-		add_definitions("-DBOOST_TEST_DYN_LINK")
-	endif()
-	include_directories(SYSTEM ${Boost_INCLUDE_DIR})
-	link_directories(${Boost_LIBRARY_DIR})
-
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
-	find_package(SQLite3 REQUIRED)
-	include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
-
-	set(SILICIUM_INCLUDE_DIR "/usr/local/include" CACHE PATH "")
-	include_directories(SYSTEM ${SILICIUM_INCLUDE_DIR})
-
-	set(WEBSOCKETPP_INCLUDE_DIR "/usr/local/include" CACHE PATH "")
-	include_directories(SYSTEM ${WEBSOCKETPP_INCLUDE_DIR})
+	message(FATAL_ERROR "you must use Conan to install the dependencies")
 endif()
 
 if(WIN32)
@@ -71,20 +47,6 @@ if(WIN32)
 
 	add_definitions("-DBOOST_ASIO_HAS_IOCP")
 endif()
-
-option(EINKAEUFER_NO_EXCEPTIONS "disable try/catch and throw; when something would normally throw, the process will std::terminate() instead" OFF)
-if(EINKAEUFER_NO_EXCEPTIONS)
-	if(MSVC)
-		add_definitions("-D_HAS_EXCEPTIONS=0")
-		add_definitions("-DBOOST_NO_CXX11_NOEXCEPT=")
-		add_definitions("-DBOOST_ASIO_ERROR_CATEGORY_NOEXCEPT=")
-		set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /W3 /GR")
-	else()
-		add_definitions("-fno-exceptions")
-	endif()
-endif()
-
-include_directories(.)
 
 add_subdirectory("tests")
 

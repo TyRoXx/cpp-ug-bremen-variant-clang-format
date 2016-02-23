@@ -1,0 +1,11 @@
+[requires]
+silicium/0.6@TyRoXx/master
+catch/1.3.0@TyRoXx/stable
+eggs-cpp-variant/2016.2.6@TyRoXx/develop
+
+[generators]
+cmake
+
+[imports]
+bin, *.dll -> ./bin
+lib, *.dylib* -> ./bin

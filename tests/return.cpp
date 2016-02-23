@@ -35,16 +35,16 @@ TEST_CASE("return Si::variant", "")
 TEST_CASE("Si::variant nested visit", "")
 {
 	Si::variant<std::string, boost::system::error_code> maybe_formatted =
-	  Si::visit<Si::variant<std::string, boost::system::error_code>>(
-	    file_size(__FILE__),
-	    [](boost::uintmax_t size)
-	    {
-		    return boost::lexical_cast<std::string>(size);
-		},
-	    [](boost::system::error_code ec)
-	    {
-		    return ec;
-		});
+	    Si::visit<Si::variant<std::string, boost::system::error_code>>(
+	        file_size(__FILE__),
+	        [](boost::uintmax_t size)
+	        {
+		        return boost::lexical_cast<std::string>(size);
+		    },
+	        [](boost::system::error_code ec)
+	        {
+		        return ec;
+		    });
 
 	Si::visit<void>(maybe_formatted,
 	                [](std::string const &formatted)

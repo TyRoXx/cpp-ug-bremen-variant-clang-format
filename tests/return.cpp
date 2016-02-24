@@ -18,42 +18,48 @@ namespace
 	}
 }
 
+using boost::system::error_code;
+using std::string;
+using boost::uintmax_t;
+using Si::variant;
+using Si::visit;
+
 TEST_CASE("return Si::variant", "")
 {
-	Si::visit<void>(file_size(__FILE__),
-	                [](boost::uintmax_t size)
-	                {
-		                CHECK(size >= 800);
-		            },
-	                [](boost::system::error_code ec)
-	                {
-		                CHECK(boost::system::error_code() == ec);
-		                FAIL("Expected success");
-		            });
+	visit<void>(file_size(__FILE__),
+	            [](uintmax_t size)
+	            {
+		            CHECK(size >= 800);
+		        },
+	            [](error_code ec)
+	            {
+		            CHECK(error_code() == ec);
+		            FAIL("Expected success");
+		        });
 }
 
 TEST_CASE("Si::variant nested visit", "")
 {
-	Si::variant<std::string, boost::system::error_code> maybe_formatted =
-	    Si::visit<Si::variant<std::string, boost::system::error_code>>(
+	variant<string, error_code> maybe_formatted =
+	    visit<variant<string, error_code>>(
 	        file_size(__FILE__),
-	        [](boost::uintmax_t size)
+	        [](uintmax_t size)
 	        {
-		        return boost::lexical_cast<std::string>(size);
+		        return boost::lexical_cast<string>(size);
 		    },
-	        [](boost::system::error_code ec)
+	        [](error_code ec)
 	        {
 		        return ec;
 		    });
 
-	Si::visit<void>(maybe_formatted,
-	                [](std::string const &formatted)
-	                {
-		                CHECK(formatted.size() >= 3);
-		            },
-	                [](boost::system::error_code ec)
-	                {
-		                CHECK(boost::system::error_code() == ec);
-		                FAIL("Expected success");
-		            });
+	visit<void>(maybe_formatted,
+	            [](string const &formatted)
+	            {
+		            CHECK(formatted.size() >= 3);
+		        },
+	            [](error_code ec)
+	            {
+		            CHECK(error_code() == ec);
+		            FAIL("Expected success");
+		        });
 }

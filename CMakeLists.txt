@@ -8,8 +8,6 @@ if(UNIX)
 		execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
 		if(GCC_VERSION VERSION_GREATER 4.7)
 			add_definitions(-std=c++1y)
-			#relevant for GCC 5.X: use C++03 stdlib ABI because Conan builds Boost in C++03 mode apparently.
-			add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 		else()
 			add_definitions(-std=c++0x)
 		endif()

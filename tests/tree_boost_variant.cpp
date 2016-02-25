@@ -67,7 +67,7 @@ namespace
 	}
 }
 
-TEST_CASE("tree of eggs::variant", "tree")
+TEST_CASE("tree of boost::variant", "tree")
 {
 	expression right = Si::make_unique<add>(reference{"b"}, literal{1});
 	expression root = Si::make_unique<add>(reference{"a"}, std::move(right));

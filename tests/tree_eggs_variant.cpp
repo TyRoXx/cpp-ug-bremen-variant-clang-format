@@ -9,13 +9,7 @@ namespace
 	struct reference;
 	struct literal;
 
-	typedef eggs::variant<add, reference, literal> expression;
-
-	struct add
-	{
-		std::unique_ptr<expression> left;
-		std::unique_ptr<expression> right;
-	};
+	typedef eggs::variant<std::unique_ptr<add>, reference, literal> expression;
 
 	struct reference
 	{
@@ -27,6 +21,18 @@ namespace
 		std::uint64_t value;
 	};
 
+	struct add
+	{
+		expression left;
+		expression right;
+
+		add(expression left, expression right)
+		    : left(std::move(left))
+		    , right(std::move(right))
+		{
+		}
+	};
+
 	void print(std::ostream &out, expression const &root);
 
 	struct expression_printer
@@ -35,12 +41,12 @@ namespace
 
 		std::ostream &out;
 
-		void operator()(add const &add_) const
+		void operator()(std::unique_ptr<add> const &add_) const
 		{
 			out << '(';
-			print(out, *add_.left);
+			print(out, add_->left);
 			out << " + ";
-			print(out, *add_.right);
+			print(out, add_->right);
 			out << ')';
 		}
 
@@ -63,11 +69,8 @@ namespace
 
 TEST_CASE("tree of eggs::variant", "tree")
 {
-	std::unique_ptr<expression> right = Si::make_unique<expression>(
-	    add{Si::make_unique<expression>(reference{"b"}),
-	        Si::make_unique<expression>(literal{1})});
-	expression root =
-	    add{Si::make_unique<expression>(reference{"a"}), std::move(right)};
+	expression right = Si::make_unique<add>(reference{"b"}, literal{1});
+	expression root = Si::make_unique<add>(reference{"a"}, std::move(right));
 	std::ostringstream buffer;
 	print(buffer, root);
 	CHECK("(a + (b + 1))" == buffer.str());

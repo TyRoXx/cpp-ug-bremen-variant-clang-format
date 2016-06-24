@@ -1,6 +1,6 @@
 [requires]
 silicium/0.8@TyRoXx/master
-catch/1.3.0@TyRoXx/stable
+catch/1.5.0@TyRoXx/stable
 eggs-cpp-variant/2016.2.6@TyRoXx/develop
 
 [generators]
